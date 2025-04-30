@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        textarea, select, button { display: block; margin: 10px 0; width: 100%; padding: 10px; }
+        #result { font-size: 18px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Spam Email Detector</h2>
+    <form id="spamForm">
+        <label for="email_text">Enter Email Content:</label>
+        <textarea id="email_text" name="email_text" rows="5"></textarea>
+
+        <label for="model">Choose Model:</label>
+        <select id="model" name="model">
+            <option value="SVM">SVM</option>
+            <option value="Decision Tree">Decision Tree</option>
+            <option value="Naive Bayes">Naive Bayes</option>
+            <option value="Logistic Regression">Logistic Regression</option>
+        </select>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("spamForm").onsubmit = async function(event) {
+            event.preventDefault();
+            let formData = new FormData(document.getElementById("spamForm"));
+
+            let response = await fetch("/", {
+                method: "POST",
+                body: formData
+            });
+
+            let data = await response.json();
+            document.getElementById("result").innerHTML = `Prediction: ${data.result} <br> Accuracy: ${data.accuracy}`;
+        };
+    </script>
+</body>
+</html>
