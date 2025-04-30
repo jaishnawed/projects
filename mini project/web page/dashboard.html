@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BREAST CANCER DETECTION DASHBOARD</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #fce4ec, #f8bacf);
+      background: url('./image/background_image.jpg') no-repeat center center fixed;
+      padding: 40px;
+      margin: 0;
+    }
+
+    h1 {
+      color: #e91e63;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    #fileInput {
+      display: block;
+      margin: 0 auto 40px auto;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #000;
+      font-weight: bold;
+    }
+
+    #dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px;
+    }
+
+    .chart {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 20px;
+      height: 500px;
+    }
+    .container {
+            width: 80%;
+            margin: auto;
+            
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+        .container:hover {
+            transform: scale(1.02);
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #e91e63;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+            animation: fadeIn 2s;
+            align-items: center;
+        }
+        .button:hover {
+            background-color: #d81b60;
+        }
+  </style>
+</head>
+<body>
+
+  <h1>BREAST CANCER DETECTION DASHBOARD</h1>
+  <input type="file" id="fileInput" accept=".json" />
+  <div id="dashboard">
+    <div id="chart1" class="chart"></div>
+    <div id="chart2" class="chart"></div>
+    <div id="chart3" class="chart"></div>
+    <div id="chart4" class="chart"></div>
+    <div id="chart5" class="chart"></div>
+    <div id="chart6" class="chart"></div>
+    <div id="chart7" class="chart"></div>
+    <div id="chart8" class="chart"></div>
+  </div>
+  <div class="container">
+    <a href="breast_cancer.html" class="button">Main Page</a>
+    <a href="test_data.html" class="button">Look at Test Data</a>
+  </div>
+
+  <script>
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+        let data = JSON.parse(content);
+        if (!Array.isArray(data)) data = [data];
+
+        const diagnosis = data.map(d => d.diagnosis_encoded);
+        const radius_mean = data.map(d => d.radius_mean);
+        const concave_points_mean = data.map(d => d["concave points_mean"]);
+        const perimeter_mean = data.map(d => d.perimeter_mean);
+        const area_mean = data.map(d => d.area_mean);
+        const compactness_mean = data.map(d => d.compactness_mean);
+        const smoothness_mean = data.map(d => d.smoothness_mean);
+        const fractal_dimension_mean = data.map(d => d.fractal_dimension_mean);
+        const radius_worst = data.map(d => d.radius_worst);
+        const area_worst = data.map(d => d.area_worst);
+        const id = data.map((_, i) => i + 1);
+
+        const diagCounts = [diagnosis.filter(v => v === 0).length, diagnosis.filter(v => v === 1).length];
+        Plotly.newPlot('chart1', [{
+          labels: ['Benign', 'Malignant'],
+          values: diagCounts,
+          type: 'pie',
+          hole: 0.4
+        }], { title: 'Diagnosis Distribution' });
+
+        Plotly.newPlot('chart2', [
+          {
+            y: data.filter(d => d.diagnosis_encoded === 0).map(d => d.radius_mean),
+            name: 'Benign',
+            type: 'box'
+          },
+          {
+            y: data.filter(d => d.diagnosis_encoded === 1).map(d => d.radius_mean),
+            name: 'Malignant',
+            type: 'box'
+          }
+        ], { title: 'Radius Mean by Diagnosis' });
+
+        Plotly.newPlot('chart3', [{
+          x: radius_mean,
+          y: concave_points_mean,
+          mode: 'markers',
+          marker: {
+            color: diagnosis,
+            colorscale: 'Portland',
+            showscale: true
+          },
+          type: 'scatter'
+        }], {
+          title: 'Radius Mean vs Concave Points Mean',
+          xaxis: { title: 'Radius Mean' },
+          yaxis: { title: 'Concave Points Mean' }
+        });
+
+        const features = ['radius_mean', 'perimeter_mean', 'area_mean', 'compactness_mean', 'smoothness_mean'];
+        const matrix = features.map(f1 =>
+          features.map(f2 =>
+            pearson(data.map(d => d[f1]), data.map(d => d[f2]))
+          )
+        );
+        Plotly.newPlot('chart4', [{
+          z: matrix,
+          x: features,
+          y: features,
+          type: 'heatmap',
+          colorscale: 'Viridis'
+        }], { title: 'Feature Correlation Heatmap' });
+
+        const avgByDiagnosis = (key) => {
+          return [
+            data.filter(d => d.diagnosis_encoded === 0).reduce((a, b) => a + b[key], 0) / diagCounts[0],
+            data.filter(d => d.diagnosis_encoded === 1).reduce((a, b) => a + b[key], 0) / diagCounts[1]
+          ];
+        };
+        Plotly.newPlot('chart5', [{
+          x: ['Benign', 'Malignant'],
+          y: avgByDiagnosis('concavity_mean'),
+          type: 'bar'
+        }], { title: 'Avg. Concavity Mean by Diagnosis' });
+
+        Plotly.newPlot('chart6', [{
+          x: id,
+          y: smoothness_mean,
+          mode: 'lines+markers',
+          type: 'scatter'
+        }], { title: 'Smoothness Mean Over ID' });
+
+        const low = radius_mean.filter(v => v < 12).length;
+        const med = radius_mean.filter(v => v >= 12 && v < 18).length;
+        const high = radius_mean.filter(v => v >= 18).length;
+        Plotly.newPlot('chart7', [{
+          labels: ['Low (<12)', 'Medium (12-18)', 'High (18+)'],
+          values: [low, med, high],
+          type: 'pie',
+          hole: 0.5
+        }], { title: 'Radius Mean Range Breakdown' });
+
+        Plotly.newPlot('chart8', [{
+          type: 'treemap',
+          labels: ['Benign', 'Malignant'],
+          parents: ['',''],
+          values: [
+            data.filter(d => d.diagnosis_encoded === 0).reduce((a, b) => a + b.area_worst, 0),
+            data.filter(d => d.diagnosis_encoded === 1).reduce((a, b) => a + b.area_worst, 0)
+          ]
+        }], { title: 'Area Worst by Diagnosis' });
+      };
+      reader.readAsText(file);
+    });
+
+    function pearson(x, y) {
+      const n = x.length;
+      const avgX = x.reduce((a, b) => a + b, 0) / n;
+      const avgY = y.reduce((a, b) => a + b, 0) / n;
+      const numerator = x.map((_, i) => (x[i] - avgX) * (y[i] - avgY)).reduce((a, b) => a + b, 0);
+      const denominatorX = Math.sqrt(x.map(v => (v - avgX) ** 2).reduce((a, b) => a + b, 0));
+      const denominatorY = Math.sqrt(y.map(v => (v - avgY) ** 2).reduce((a, b) => a + b, 0));
+      return numerator / (denominatorX * denominatorY);
+    }
+  </script>
+</body>
+</html>

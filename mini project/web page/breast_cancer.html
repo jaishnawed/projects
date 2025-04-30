@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Cancer Awareness</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('./image/background_image.jpg') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+            overflow-x: hidden;
+        }
+        .header {
+            
+            
+            color: #e91e63;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            animation: fadeIn 2s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: scale(1.02);
+        }
+        .quote {
+            font-style: italic;
+            color: #555;
+            margin-top: 15px;
+            animation: fadeInUp 1.5s;
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .images-section {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .images-section img {
+            width: 250px;
+            height: auto;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            transform: scale(1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .images-section img:hover {
+            transform: scale(1.1);
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #e91e63;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+            animation: fadeIn 2s;
+        }
+        .button:hover {
+            background-color: #d81b60;
+        }
+        .footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(233, 30, 99, 0.9);
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        function showInfo(message) {
+            alert(message);
+        }
+    </script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Breast Cancer Detection</h1>
+    </div>
+
+    <div class="container">
+        <h2>What is Breast Cancer?</h2>
+        <p>
+            Breast cancer is a disease in which cells in the breast grow out of control.
+            It is one of the most common types of cancer worldwide.
+        </p>
+    </div>
+
+    <div class="container">
+        <h2>Early Detection & Prevention</h2>
+        <ul style="text-align: left; margin-left: 25%; line-height: 1.8;">
+            <li>Perform regular self-examinations.</li>
+            <li>Schedule routine mammograms.</li>
+            <li>Maintain a healthy lifestyle.</li>
+            <li>Know your family history.</li>
+            <li>Consult a doctor if you notice any unusual changes.</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>Breast Cancer Awareness Images</h2>
+        <div class="images-section">
+            <img src="./image/image_1.webp" alt="Breast Cancer Awareness Ribbon" onclick="showInfo('Breast Cancer Awareness Ribbon: Symbol of hope and solidarity.')">
+            <img src="./image/image_2.webp" alt="Mammogram Detection" onclick="showInfo('Mammogram Detection: Early screening for better diagnosis.')">
+            <img src="./image/image_3.webp" alt="Breast Cancer Self-Examination" onclick="showInfo('Breast Cancer Self-Examination: Early detection starts with you.')">
+        </div>
+    </div>
+
+    
+
+    <div class="container">
+        <a href="login.html" class="button">Go to Hospital Login</a>
+        <a href="test_data.html" class="button">Look at Test Data</a>
+        <a href="dashboard.html" class="button">Dashboard</a>
+    </div>
+    
+    <div class="container">
+        <h3>Quote of the Day</h3>
+        <p class="quote">
+            "Hope and courage are the foundation of survival. Never give up."
+        </p>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Breast Cancer Awareness | Stay Strong, Stay Aware
+    </div>
+
+</body>
+</html>
